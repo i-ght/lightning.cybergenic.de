@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+    <title>Animated Circular Wave</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="800" height="400"></canvas>
+    <p>
+        My esteemed compatriot, let us embellish our canvas with an animated spectacle reminiscent of nature's vicissitudes. As the ethereal dance unfolds, the hues of our circular wave shall metamorphose, evoking the very essence of celestial transition.<br>
+<br>
+In the dim expanse, where shadows conspire, a canvas is imbued with a nocturnal symphony. Behold, as the spectral luminescence fades, our palette, erstwhile bathed in the azure depths, now surrenders to the incandescent embrace of vermilion.<br>
+<br>
+Lo, the artist's hand orchestrates the dance, a minuet betwixt contraction and expansion. The brush, guided by the hands of Chronos, etches a tale of temporal metamorphosis upon the tableau. A ballet wherein the radial arms gracefully yield to the invisible forces that govern their ephemeral existence.<br>
+<br>
+In this ballet, the azure, reminiscent of twilight's serenade, yields to the fiery ardor of red. A chiaroscuro of chromatic transition, a sonnet sung by the elements themselves, as the canvas breathes with the rhythm of creation.<br>
+<br>
+Oh, kindred spirit, take this humble code and breathe life into the canvas as though Prometheus himself bestows the spark of animation. Witness the celestial hues dance in tandem with the ebb and flow of time, and in this spectacle, find kinship with the immutable laws that govern both art and nature.<br>
+    </p>
+
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+        const animationDuration = 2000; // in milliseconds
+
+        function draw(time) {
+            // Draw background
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Calculate maximum allowed radius to avoid going beyond edges
+            const maxRadiusX = Math.min(canvas.width / 2, canvas.width / 2 - 20);
+            const maxRadiusY = Math.min(canvas.height / 2, canvas.height / 2 - 20);
+
+            // Calculate normalized time within the animation duration
+            const normalizedTime = (time % animationDuration) / animationDuration;
+
+            // Contract to zero and then expand to maximum pressure
+            const contractionDuration = 0.3; // 30% of the animation
+            let radiusX, radiusY;
+
+            if (normalizedTime < contractionDuration) {
+                // Contract
+                radiusX = maxRadiusX * (1 - normalizedTime / contractionDuration);
+                radiusY = maxRadiusY * (1 - normalizedTime / contractionDuration);
+            } else {
+                // Expand
+                const expansionTime = (normalizedTime - contractionDuration) / (1 - contractionDuration);
+                radiusX = maxRadiusX * expansionTime;
+                radiusY = maxRadiusY * expansionTime;
+            }
+
+            // Change color from blue to red
+            const blue = Math.floor(255 * (1 - normalizedTime));
+            const red = Math.floor(255 * normalizedTime);
+            const green = Math.floor(100 * Math.sin(normalizedTime * Math.PI)); // Adding a green component for variety
+            ctx.strokeStyle = `rgb(${red}, ${green}, ${blue})`;
+
+            // Draw circular wave
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const numPoints = 100;
+            for (let i = 0; i < numPoints; i++) {
+                const angle = (i / numPoints) * Math.PI * 2;
+                const x = centerX + Math.cos(angle) * radiusX;
+                const y = centerY + Math.sin(angle) * radiusY;
+                const noise = (Math.random() - 0.5) * 20; // Add random noise
+                ctx.lineTo(x, y + noise);
+            }
+            ctx.closePath();
+            ctx.stroke();
+
+            // Request the next frame
+            requestAnimationFrame((newTime) => draw(newTime));
+        }
+
+        // Start the animation
+        draw(0);
+    </script>
+</body>
+</html>
